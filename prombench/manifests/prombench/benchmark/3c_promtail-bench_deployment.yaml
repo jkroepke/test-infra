@@ -7,16 +7,17 @@ metadata:
     app: promtail
 data:
   promtail.yaml: |
-    client:
+    clients:
+    - url: http://loki.default.svc.cluster.local:3100/api/prom/push
       batchwait: 1s # Maximum wait period before sending batch
       batchsize: 102400 # Maximum batch size to accrue before sending, unit is byte
 
       timeout: 10s # Maximum time to wait for server to respond to a request
 
       backoff_config:
-        minbackoff: 100ms # Initial backoff time between retries
-        maxbackoff: 5s # Maximum backoff time between retries
-        maxretries: 5 # Maximum number of retries when sending batches, 0 means infinite retries
+        min_period: 100ms # Initial backoff time between retries
+        max_period: 5s # Maximum backoff time between retries
+        max_retries: 5 # Maximum number of retries when sending batches, 0 means infinite retries
 
     server:
       http_listen_port: 3101
@@ -27,6 +28,9 @@ data:
 
     scrape_configs:
     - job_name: kubernetes-pods
+      pipeline_stages:
+      - docker: {}
+      - cri: {}
       kubernetes_sd_configs:
       - role: pod
       relabel_configs:
@@ -98,11 +102,10 @@ spec:
                 - test-pr-{{ .PR_NUMBER }}
       containers:
         - name: promtail
-          image: grafana/promtail:1.4.1
+          image: grafana/promtail:2.9.3
           imagePullPolicy: IfNotPresent
           args:
             - "-config.file=/etc/promtail/promtail.yaml"
-            - "-client.url=http://loki.default.svc.cluster.local:3100/api/prom/push"
           volumeMounts:
             - name: config
               mountPath: /etc/promtail
