@@ -194,11 +194,10 @@ spec:
                 - test-{{ normalise .RELEASE }}
       containers:
         - name: promtail
-          image: grafana/promtail:1.4.1
+          image: grafana/promtail:2.9.3
           imagePullPolicy: IfNotPresent
           args:
             - "-config.file=/etc/promtail/promtail.yaml"
-            - "-client.url=http://loki.default.svc.cluster.local:3100/api/prom/push"
           volumeMounts:
             - name: config
               mountPath: /etc/promtail
