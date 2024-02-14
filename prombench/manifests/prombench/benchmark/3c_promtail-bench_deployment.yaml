@@ -139,7 +139,7 @@ spec:
         node-name: prometheus-{{ .PR_NUMBER }}
         isolation: prometheus
       tolerations:
-        - key: node-role.kubernetes.io/master
+        - key: node-role.kubernetes.io/control-plane
           effect: NoSchedule
       volumes:
         - name: config
@@ -232,7 +232,7 @@ spec:
         node-name: prometheus-{{ .PR_NUMBER }}
         isolation: prometheus
       tolerations:
-        - key: node-role.kubernetes.io/master
+        - key: node-role.kubernetes.io/control-plane
           effect: NoSchedule
       volumes:
         - name: config
